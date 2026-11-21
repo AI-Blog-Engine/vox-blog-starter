@@ -21,6 +21,8 @@ export async function POST(req: Request) {
   if (!valid) return new Response("invalid signature", { status: 401 });
 
   revalidateTag(CACHE_TAG, "max");
+  // Both root layouts: the unprefixed (primary language) pages and /<lang>/… on multi-language sites.
   revalidatePath("/", "layout");
+  revalidatePath("/[lang]", "layout");
   return new Response(null, { status: 204 });
 }

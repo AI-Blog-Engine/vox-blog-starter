@@ -1,7 +1,8 @@
 /*
  * Design tokens. Change these first when you make the blog your own.
  * Cool paper, ink text, one moss accent, a marker yellow for focus. Bricolage Grotesque for headings and navigation,
- * Source Serif 4 for reading.
+ * Source Serif 4 for reading; Noto Sans / Serif Bengali take over for Bangla characters (the browser picks the font
+ * per character, so Latin text keeps the faces above).
  */
 :root {
   --paper: #f7f9f8;
@@ -13,8 +14,8 @@
   --accent-ink: #ffffff;
   --marker: #f6d365;
 
-  --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
-  --reading: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --display: "Bricolage Grotesque", "Noto Sans Bengali", "Avenir Next", system-ui, sans-serif;
+  --reading: "Source Serif 4", "Noto Serif Bengali", Georgia, "Times New Roman", serif;
 
   --wrap: 72rem;
   --measure: 68ch;
@@ -87,7 +88,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .brand {
   font-family: var(--display); font-weight: 700; font-size: 1.35rem;
-  letter-spacing: -0.02em; text-decoration: none; margin-right: auto;
+  letter-spacing: -0.02em; text-decoration: none; margin-inline-end: auto;
 }
 .mainnav { display: flex; gap: 1.25rem; font-family: var(--display); font-size: 0.95rem; }
 .mainnav a { text-decoration: none; color: var(--ink-soft); }
@@ -98,18 +99,46 @@ img { max-width: 100%; height: auto; display: block; }
   font: inherit; font-family: var(--display); font-size: 0.95rem;
   width: 12rem; padding: 0.45rem 0.75rem;
   background: var(--paper); color: var(--ink);
-  border: 1px solid var(--rule); border-right: 0;
-  border-radius: var(--radius-small) 0 0 var(--radius-small);
+  border: 1px solid var(--rule); border-inline-end: 0;
+  border-start-start-radius: var(--radius-small); border-end-start-radius: var(--radius-small);
 }
 .search button {
   font-family: var(--display); font-size: 0.9rem; font-weight: 600;
   padding: 0.45rem 0.8rem; cursor: pointer;
   background: var(--ink); color: var(--paper);
-  border: 1px solid var(--ink); border-radius: 0 var(--radius-small) var(--radius-small) 0;
+  border: 1px solid var(--ink);
+  border-start-end-radius: var(--radius-small); border-end-end-radius: var(--radius-small);
 }
 .search-large { margin-block: 1rem 2rem; max-width: 36rem; }
 .search-large input { flex: 1; width: auto; font-size: 1.05rem; padding: 0.7rem 1rem; }
 .search-large button { padding-inline: 1.2rem; font-size: 1rem; }
+
+/* Language switcher: a disclosure (<details>), so it opens with Enter / Space and works without JavaScript. */
+.langswitch { position: relative; font-family: var(--display); font-size: 0.95rem; }
+.langswitch summary {
+  display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; list-style: none;
+  padding: 0.4rem 0.7rem; color: var(--ink-soft);
+  border: 1px solid var(--rule); border-radius: var(--radius-small);
+}
+.langswitch summary::-webkit-details-marker { display: none; }
+.langswitch summary::after {
+  content: ""; width: 0.4rem; height: 0.4rem; margin-inline-start: 0.15rem;
+  border-inline-end: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: translateY(-0.12rem) rotate(45deg);
+}
+.langswitch summary:hover, .langswitch[open] summary { color: var(--ink); border-color: var(--ink-soft); }
+.langswitch-list {
+  position: absolute; inset-inline-end: 0; top: calc(100% + 0.35rem); z-index: 20;
+  min-width: 11rem; margin: 0; padding: 0.35rem; list-style: none;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: var(--radius-small);
+  box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 0.08);
+}
+.langswitch-list a {
+  display: block; padding: 0.45rem 0.7rem; text-decoration: none;
+  color: var(--ink-soft); border-radius: var(--radius-small);
+}
+.langswitch-list a:hover { background: var(--surface); color: var(--ink); }
+.langswitch-list a[aria-current] { color: var(--accent); font-weight: 600; }
 
 @media (max-width: 40rem) {
   .masthead-row { gap: 0.75rem 1.25rem; }
@@ -236,6 +265,11 @@ img { max-width: 100%; height: auto; display: block; }
   font-family: var(--display); font-size: 0.95rem; color: var(--ink-soft);
 }
 .article-author { color: var(--ink); font-weight: 600; }
+.article-langs {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 0.9rem; margin: 1rem 0 0;
+  font-family: var(--display); font-size: 0.95rem; color: var(--ink-soft);
+}
+.article-langs a { color: var(--accent); font-weight: 600; text-underline-offset: 3px; }
 .article-cover { margin-block: 0 2.5rem; }
 .article-cover img { width: 100%; max-height: 32rem; object-fit: cover; border-radius: var(--radius-large); }
 
@@ -272,13 +306,13 @@ img { max-width: 100%; height: auto; display: block; }
 .prose h4 { font-size: 1.1rem; font-weight: 700; margin: 1.6rem 0 0.4rem; }
 .prose p { margin: 0 0 1.2rem; }
 .prose a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
-.prose ul, .prose ol { padding-left: 1.4rem; margin: 0 0 1.25rem; }
+.prose ul, .prose ol { padding-inline-start: 1.4rem; margin: 0 0 1.25rem; }
 .prose li { margin-bottom: 0.4rem; }
 .prose li::marker { color: var(--accent); }
 .prose strong { font-weight: 700; }
 .prose blockquote {
-  margin: 1.75rem 0; padding: 0.25rem 0 0.25rem 1.25rem;
-  border-left: 3px solid var(--accent); color: var(--ink-soft); font-style: italic;
+  margin: 1.75rem 0; padding-block: 0.25rem; padding-inline: 1.25rem 0;
+  border-inline-start: 3px solid var(--accent); color: var(--ink-soft); font-style: italic;
 }
 .prose img { border-radius: var(--radius-small); margin: 1.5rem 0; }
 .prose hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
@@ -295,7 +329,7 @@ img { max-width: 100%; height: auto; display: block; }
   display: block; overflow-x: auto; width: 100%; border-collapse: collapse;
   margin: 1.5rem 0; font-family: var(--display); font-size: 0.95rem;
 }
-.prose th, .prose td { text-align: left; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.prose th, .prose td { text-align: start; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
 .prose th { font-weight: 700; border-bottom-color: var(--ink); }
 
 /* ── Empty, setup and footer ──────────────────────────────────────────── */
@@ -304,7 +338,7 @@ img { max-width: 100%; height: auto; display: block; }
   font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 4.5vw, 3rem);
   letter-spacing: -0.03em; line-height: 1.05; margin: 0 0 1rem;
 }
-.setup ol { padding-left: 1.3rem; }
+.setup ol { padding-inline-start: 1.3rem; }
 .setup li { margin-bottom: 0.5rem; }
 .setup code { background: var(--surface); padding: 0.1rem 0.35rem; border-radius: var(--radius-small); font-size: 0.9em; }
 
@@ -315,6 +349,17 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .footer-row p { margin: 0; }
 .footer-row nav { display: flex; gap: 1.25rem; }
+
+/*
+ * Scripts with tall glyphs and joined letters (Bangla, Devanagari, Arabic, Urdu): no negative tracking (it breaks
+ * the joins) and more line height, so stacked consonants and diacritics are not clipped in the big headlines.
+ */
+:is(:lang(bn), :lang(hi), :lang(ar), :lang(ur)) :is(.lead-title, .article-title, .listing-title, .postrow-title, .empty h1, .setup h1, .brand, .prose h2, .prose h3, .prose h4, .section-title) {
+  letter-spacing: normal;
+  line-height: 1.3;
+}
+:is(:lang(bn), :lang(hi), :lang(ar), :lang(ur)) .prose { line-height: 1.85; }
+:is(:lang(ar), :lang(ur)) .prose blockquote { font-style: normal; }
 
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
